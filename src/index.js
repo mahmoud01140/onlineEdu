@@ -98,6 +98,9 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
+app.get("/testapp", (req, res) =>{
+  res.send("hello")
+})
 app.use("/api/auth", authRouter);
 app.use("/api/courses", courseRoutes);
 app.use("/api/users", userRoutes);
