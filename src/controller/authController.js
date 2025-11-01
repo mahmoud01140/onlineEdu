@@ -21,6 +21,7 @@ const createSendToken = (user, statusCode, res) => {
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
   };
 
   res.cookie("jwt", token, cookieOptions);
@@ -661,10 +662,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 4) Check if user is active
   if (!user.isActive) {
     return next(
-      new AppError(
-        "حسابك لم يعد نشط الان يرجى التواصل مع الادمن",
-        401
-      )
+      new AppError("حسابك لم يعد نشط الان يرجى التواصل مع الادمن", 401)
     );
   }
 
@@ -820,7 +818,6 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
-
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
   const { token } = req.params;
