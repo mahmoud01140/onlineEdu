@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { AppError } = require("../middleware/error");
 const catchAsync = require("../utils/catchAsync");
-const sendEmail = require("../utils/emailService");
+
 const admin = require("firebase-admin");
 const User = require("../models/User"); // Single User model
 const validator = require("validator");
@@ -821,57 +821,6 @@ exports.restrictTo = (...roles) => {
   };
 };
 
-exports.forgotPassword = catchAsync(async (req, res, next) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return next(new AppError("Please provide email address", 400));
-  }
-
-  const user = await User.findOne({ email: email.toLowerCase() });
-  if (!user) {
-    return next(new AppError("There is no user with that email address", 404));
-  }
-
-  // Generate reset token
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  user.passwordResetToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-  user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
-
-  await user.save({ validateBeforeSave: false });
-
-  // Send email with reset token (implement your email service)
-  try {
-    const resetURL = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/auth/resetPassword/${resetToken}`;
-
-    await sendEmail({
-      email: user.email,
-      subject: "Your password reset token (valid for 10 min)",
-      message: `Forgot your password? Submit a PATCH request with your new password to: ${resetURL}`,
-    });
-
-    res.status(200).json({
-      status: "success",
-      message: "Token sent to email!",
-    });
-  } catch (err) {
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save({ validateBeforeSave: false });
-
-    return next(
-      new AppError(
-        "There was an error sending the email. Try again later!",
-        500
-      )
-    );
-  }
-});
 
 exports.resetPassword = catchAsync(async (req, res, next) => {
   const { token } = req.params;

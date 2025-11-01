@@ -2,27 +2,27 @@ const express = require("express");
 const userController = require("../controller/userController");
 // const auth = require("../middleware/auth");
 const isAdmin = require("../middleware/isAdmin");
-
+const { protect } = require("../controller/authController");
 const router = express.Router();
 
 // مسارات عامة (تتطلب مصادقة)
-router.get("/", userController.getAllUsers);
-router.get("/stats",  userController.getUserStats);
-router.get("/search", userController.searchUsers);
-router.get("/without-groups",  userController.getUsersWithoutGroups);
-router.get("/export",  userController.exportUsers);
+router.get("/", protect ,isAdmin, userController.getAllUsers);
+router.get("/stats", protect ,isAdmin, userController.getUserStats);
+router.get("/search", protect ,isAdmin, userController.searchUsers);
+router.get("/without-groups", protect ,isAdmin, userController.getUsersWithoutGroups);
+router.get("/export", protect ,isAdmin, userController.exportUsers);
 // router.post("/exams/:examId",  userController.createUserExamResult);
 // مسارات تحتاج إلى صلاحية المشرف
-router.post("/",  userController.createUser);
-router.get("/:id", userController.getUser);
-router.patch("/:id",  userController.updateUser);
-router.delete("/:id",  userController.deleteUser);
-router.patch("/:id/toggle-status",  userController.toggleUserStatus);
-router.patch("/:id/level",  userController.updateUserLevel);
-router.patch("/:id/role",  userController.updateUserRole);
-router.post("/:id/add-to-group",  userController.addUserToGroup);
-router.post("/:id/remove-from-group",  userController.removeUserFromGroup);
-router.get("/:id/groups", userController.getUserGroups);
+router.post("/", protect ,isAdmin, userController.createUser);
+router.get("/:id", protect ,isAdmin, userController.getUser);
+router.patch("/:id", protect ,isAdmin, userController.updateUser);
+router.delete("/:id", protect ,isAdmin, userController.deleteUser);
+router.patch("/:id/toggle-status", protect ,isAdmin, userController.toggleUserStatus);
+router.patch("/:id/level", protect ,isAdmin, userController.updateUserLevel);
+router.patch("/:id/role", protect ,isAdmin, userController.updateUserRole);
+router.post("/:id/add-to-group", protect ,isAdmin, userController.addUserToGroup);
+router.post("/:id/remove-from-group", protect ,isAdmin, userController.removeUserFromGroup);
+router.get("/:id/groups", protect ,isAdmin, userController.getUserGroups);
 
 
 module.exports = router;

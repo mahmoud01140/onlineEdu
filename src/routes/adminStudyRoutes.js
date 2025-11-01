@@ -7,13 +7,12 @@ const {
   markAttendance,
   getAttendanceRecords
 } = require("../controller/adminStudyController");
-// const { authMiddleware, authorize } = require("../middleware/auth");
+const { protect } = require("../controller/authController");
+const isAdmin = require("../middleware/isAdmin");
 
-// router.use(authMiddleware);
-
-router.get("/upcoming-lessons", getUpcomingLessons);
-router.get("/group/:groupId", getGroupDetails);
-router.post("/attendance", markAttendance);
-router.get("/attendance/:lessonId", getAttendanceRecords);
+router.get("/upcoming-lessons",protect, isAdmin, getUpcomingLessons);
+router.get("/group/:groupId",protect, isAdmin, getGroupDetails);
+router.post("/attendance",protect, isAdmin, markAttendance);
+router.get("/attendance/:lessonId",protect, isAdmin, getAttendanceRecords);
 
 module.exports = router;

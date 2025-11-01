@@ -16,11 +16,11 @@ router.get("/group/:groupId", protect, lessonController.getGroupLessons);
 router.get("/:id", protect, lessonController.getLesson);
 
 // مسارات تحتاج إلى صلاحية المشرف أو المعلم
-router.post("/", protect, lessonController.createLesson);
-router.patch("/:id", protect, lessonController.updateLesson);
-router.delete("/:id", protect, lessonController.deleteLesson);
-router.post("/:id/duplicate", protect, lessonController.duplicateLesson);
-router.post("/:id/resources", protect,  lessonController.addResource);
-router.delete("/:id/resources", protect, lessonController.removeResource);
+router.post("/", protect, isAdmin, lessonController.createLesson);
+router.patch("/:id", protect, isAdmin, lessonController.updateLesson);
+router.delete("/:id", protect, isAdmin, lessonController.deleteLesson);
+router.post("/:id/duplicate", protect, isAdmin, lessonController.duplicateLesson);
+router.post("/:id/resources", protect, isAdmin, lessonController.addResource);
+router.delete("/:id/resources", protect, isAdmin, lessonController.removeResource);
 
 module.exports = router;
