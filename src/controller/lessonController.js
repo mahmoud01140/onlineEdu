@@ -17,7 +17,7 @@ exports.createLesson = catchAsync(async (req, res, next) => {
   } = req.body;
   console.log(req.body);
   // التحقق من الحقول المطلوبة
-  if (!title || !description || !groupId ) {
+  if (!title || !description || !groupId) {
     return next(new AppError("العنوان والوصف والمجموعة مطلوبة", 400));
   }
 
@@ -42,13 +42,13 @@ exports.createLesson = catchAsync(async (req, res, next) => {
 
   // تعبئة بيانات المجموعة في الاستجابة
   await newLesson.populate({
-      path: 'group',
-      select: 'title level students schedule',
-      populate : {
-        path : "insturctor",
-        select : "name email phone"
-      }
-    });
+    path: "group",
+    select: "title level students schedule",
+    populate: {
+      path: "insturctor",
+      select: "name email phone",
+    },
+  });
 
   res.status(201).json({
     status: "success",
@@ -210,12 +210,14 @@ exports.updateLesson = catchAsync(async (req, res, next) => {
 exports.deleteLesson = catchAsync(async (req, res, next) => {
   const lesson = await Lesson.findByIdAndDelete(req.params.id);
   // حذف الامتحانات المرتبطة بالدرس
-  await Exam.deleteMany({ lesson: lesson._id });
-
   if (!lesson) {
     return next(new AppError("لا يوجد درس بهذا المعرف", 404));
   }
-
+  console.log(lesson);
+  const exams = await Exam.find({ lesson: lesson._id });
+  if (exams.length > 0) {
+    await Exam.deleteMany({ lesson: lesson._id });
+  }
   res.status(200).json({
     status: "success",
     message: "تم حذف الدرس بنجاح",

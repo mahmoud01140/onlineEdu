@@ -1,7 +1,7 @@
 const catchAsync = require("../utils/catchAsync");
 const Group = require("../models/Group");
 const { AppError } = require("../middleware/error");
-
+const Lesson = require("../models/Lesson");
 // إنشاء مجموعة جديدة
 exports.createGroup = catchAsync(async (req, res, next) => {
   const {
