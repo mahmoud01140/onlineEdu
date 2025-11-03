@@ -371,13 +371,6 @@ exports.signupStudent = catchAsync(async (req, res, next) => {
     }
   });
 
-  // Address length validation
-  if (
-    req.body.address &&
-    !validator.isLength(req.body.address, { min: 10, max: 500 })
-  ) {
-    errors.push("Address must be between 10 and 500 characters");
-  }
 
   // Talents length validation
   if (
@@ -611,6 +604,8 @@ exports.logout = (req, res) => {
   res.cookie("jwt", "loggedout", {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
+    sameSite: "none",
+    secure: true,
   });
   res.status(200).json({ status: "success" });
 };
